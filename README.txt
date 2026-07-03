@@ -11,9 +11,12 @@ Files included:
 - manifest.json
 - service-worker.js
 - icons/icon.svg
+- Morning-Prep-Standalone.html
 
-How to share it
----------------
+Two ways to use it
+------------------
+1. Best option: host the PWA folder online.
+
 For the app to install on phones and work offline, upload this whole folder to a secure web host.
 
 Good simple hosting options:
@@ -28,6 +31,12 @@ After it is hosted:
 3. Choose "Add to Home Screen" or "Install app".
 4. Open Morning Prep once while online.
 5. After that, it will keep working offline.
+
+2. Quick direct-open option: use Morning-Prep-Standalone.html.
+
+This is a single-file version of the checklist. It is useful for testing or opening directly from a computer without hosting.
+
+It saves progress in the same browser, but it is not the installable PWA version.
 
 Important
 ---------

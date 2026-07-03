@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#005bbb">
+    <meta name="description" content="Morning Prep checklist for Domino's opening prep.">
+    <title>Morning Prep Standalone</title>
+    <style>
+:root {
+  color-scheme: dark;
+  --bg: #07111f;
+  --panel: #0d1b2d;
+  --panel-strong: #122947;
+  --panel-soft: #102037;
+  --text: #f4f8ff;
+  --muted: #9fb2c9;
+  --blue: #005bbb;
+  --blue-bright: #28a6ff;
+  --blue-soft: #103f78;
+  --red: #e31837;
+  --green: #25d366;
+  --line: rgba(255,255,255,.1);
+  --shadow: 0 18px 50px rgba(0,0,0,.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(40,166,255,.18), transparent 32rem),
+    linear-gradient(180deg, #07111f 0%, #081525 42%, #06101c 100%);
+  color: var(--text);
+}
+
+button {
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem 1rem;
+  background: rgba(7,17,31,.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 920px;
+  margin: 0 auto .9rem;
+}
+
+.eyebrow {
+  margin: 0 0 .2rem;
+  color: var(--blue-bright);
+  font-size: .78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.65rem, 7vw, 2.65rem);
+  line-height: 1;
+}
+
+.install-button,
+.reset-button {
+  min-height: 48px;
+  padding: .85rem 1rem;
+  border-radius: 8px;
+  background: var(--blue);
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(0,91,187,.26);
+  transition: transform .2s ease, background .2s ease;
+}
+
+.install-button:active,
+.reset-button:active,
+.count-button:active,
+.day-option:active {
+  transform: scale(.97);
+}
+
+.overall {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.overall-copy,
+.category-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+.overall-copy span,
+.category-head span {
+  color: var(--muted);
+  font-size: .92rem;
+  font-weight: 700;
+}
+
+.overall-copy strong,
+.category-head strong {
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.progress-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.1);
+}
+
+.progress-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--blue), var(--blue-bright), var(--green));
+  transition: width .35s ease;
+}
+
+#overallStatus {
+  min-height: 1.2rem;
+  margin: .45rem 0 0;
+  color: var(--muted);
+  font-size: .86rem;
+}
+
+main {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: 1rem 1rem 5rem;
+}
+
+.day-switch {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .7rem;
+  margin: .35rem 0 1rem;
+}
+
+.day-option {
+  min-height: 72px;
+  padding: .95rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  text-align: left;
+  transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+.day-option span,
+.day-option small {
+  display: block;
+}
+
+.day-option span {
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.day-option small {
+  margin-top: .25rem;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.day-option.is-active {
+  border-color: rgba(40,166,255,.85);
+  background: linear-gradient(135deg, var(--blue-soft), var(--panel-strong));
+}
+
+.actions {
+  display: flex;
+  justify-content: stretch;
+  margin-bottom: 1rem;
+}
+
+.reset-button {
+  width: 100%;
+  background: var(--red);
+  box-shadow: 0 10px 24px rgba(227,24,55,.22);
+}
+
+.checklist {
+  display: grid;
+  gap: 1rem;
+}
+
+.category {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(13,27,45,.94);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: rise .32s ease both;
+}
+
+.category-head {
+  padding: 1rem;
+  background: var(--panel-strong);
+}
+
+.category-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.category-progress {
+  padding: 0 1rem 1rem;
+  background: var(--panel-strong);
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .85rem;
+  padding: 1rem;
+  border-top: 1px solid var(--line);
+  transition: background .2s ease;
+}
+
+.item.is-complete {
+  background: rgba(37,211,102,.08);
+}
+
+.item-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: .75rem;
+}
+
+.item-name {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.required {
+  display: block;
+  margin-top: .2rem;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.35;
+}
+
+.checkmark {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid rgba(255,255,255,.14);
+  border-radius: 50%;
+  color: transparent;
+  font-size: 1.25rem;
+  font-weight: 900;
+  transition: color .2s ease, background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.item.is-complete .checkmark {
+  border-color: var(--green);
+  background: var(--green);
+  color: #04120a;
+  transform: rotate(-8deg) scale(1.05);
+}
+
+.counter {
+  display: grid;
+  grid-template-columns: 64px 1fr 64px;
+  align-items: center;
+  gap: .65rem;
+}
+
+.count-button {
+  height: 62px;
+  border-radius: 8px;
+  background: var(--panel-soft);
+  color: var(--blue-bright);
+  font-size: 2rem;
+  font-weight: 900;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.count-button:hover,
+.install-button:hover,
+.reset-button:hover,
+.day-option:hover {
+  filter: brightness(1.08);
+}
+
+.count-display {
+  display: grid;
+  min-height: 62px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #071322;
+  font-size: 2rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.celebration.is-visible {
+  opacity: 1;
+}
+
+.celebration strong {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: rgba(5,13,23,.94);
+  border: 1px solid rgba(37,211,102,.5);
+  color: var(--green);
+  font-size: clamp(1.45rem, 9vw, 3rem);
+  box-shadow: var(--shadow);
+  animation: pop .7s ease both;
+}
+
+.celebration span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--blue-bright);
+  animation: confetti .95s ease-out both;
+}
+
+.celebration span:nth-child(2) { background: var(--green); animation-delay: .05s; }
+.celebration span:nth-child(3) { background: var(--red); animation-delay: .1s; }
+.celebration span:nth-child(4) { background: #fff; animation-delay: .15s; }
+.celebration span:nth-child(5) { background: #ffd23f; animation-delay: .2s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop {
+  0% { transform: scale(.82); opacity: 0; }
+  55% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes confetti {
+  0% { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) rotate(360deg); opacity: 0; }
+}
+
+.celebration span:nth-child(1) { --x: -42vw; --y: -32vh; }
+.celebration span:nth-child(2) { --x: 38vw; --y: -28vh; }
+.celebration span:nth-child(3) { --x: -34vw; --y: 28vh; }
+.celebration span:nth-child(4) { --x: 36vw; --y: 32vh; }
+.celebration span:nth-child(5) { --x: 0vw; --y: -42vh; }
+
+@media (min-width: 680px) {
+  .day-switch {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .item {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-top">
+        <div>
+          <p class="eyebrow">Domino's Opening Prep</p>
+          <h1>Morning Prep</h1>
+        </div>
+        <button class="install-button" id="installButton" type="button" hidden>Install</button>
+      </div>
+      <div class="overall">
+        <div class="overall-copy">
+          <span>Overall Progress</span>
+          <strong id="overallPercent">0%</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span id="overallBar"></span>
+        </div>
+        <p id="overallStatus">Choose a prep list to begin.</p>
+      </div>
+    </header>
+
+    <main>
+      <section class="day-switch" aria-label="Prep schedule">
+        <button class="day-option is-active" type="button" data-schedule="weekday">
+          <span>Sunday-Thursday</span>
+          <small>Standard open</small>
+        </button>
+        <button class="day-option" type="button" data-schedule="weekend">
+          <span>Friday-Saturday</span>
+          <small>High volume</small>
+        </button>
+      </section>
+
+      <section class="actions" aria-label="Checklist actions">
+        <button class="reset-button" id="resetButton" type="button">Reset Checklist</button>
+      </section>
+
+      <section id="checklist" class="checklist" aria-live="polite"></section>
+    </main>
+
+    <div class="celebration" id="celebration" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+      <strong>Prep Complete</strong>
+    </div>
+    <script>
+window.MORNING_PREP_DATA = {
+  categories: ["Cheeses", "Desserts", "RTE", "Veggies", "Sauces"],
+  schedules: {
+    weekday: {
+      label: "Sunday-Thursday",
+      categories: {
+        Cheeses: [
+          { id: "string-cheese", name: "String Cheese", required: 3, unit: "long tall tubs" },
+          { id: "mix-cheese", name: "Mix Cheese", required: 1, unit: "pizza tub" }
+        ],
+        Desserts: [
+          { id: "lava-cakes", name: "Lava Cakes", required: 1, unit: "long tall tub" },
+          { id: "brownies", name: "Brownies", required: 1, unit: "round tub" }
+        ],
+        RTE: [
+          { id: "loaded-chicken", name: "Loaded Chicken", required: 1, unit: "long tall tub" },
+          { id: "boneless-wings", name: "Boneless Wings", required: 1, unit: "long tall tub" },
+          { id: "chicken-wings", name: "Chicken Wings", required: 1, unit: "long tall tub" },
+          { id: "pasta", name: "Pasta", required: 1, unit: "long tall tub" },
+          { id: "grilled-chicken", name: "Grilled Chicken", required: 1, unit: "square tub" }
+        ],
+        Veggies: [
+          { id: "mushrooms", name: "Mushrooms", required: 3, unit: "metal tubs" },
+          { id: "pineapple", name: "Pineapple", required: 3, unit: "square tubs" },
+          { id: "olives", name: "Olives", required: 3, unit: "square tubs" },
+          { id: "tomatoes", name: "Tomatoes", required: 1, unit: "square tub" },
+          { id: "jalapenos", name: "Jalapenos", required: 1, unit: "square tub" },
+          { id: "banana-peppers", name: "Banana Peppers", required: 1, unit: "square tub" }
+        ],
+        Sauces: [
+          { id: "pizza-tubs", name: "Pizza Tubs", required: 4, unit: "tubs" },
+          { id: "pizza-bottles", name: "Pizza Bottles", required: 6, unit: "bottles" },
+          { id: "ranch", name: "Ranch", required: 2, unit: "bottles" },
+          { id: "garlic-parm", name: "Garlic Parm", required: 6, unit: "bottles" },
+          { id: "alfredo", name: "Alfredo", required: 8, unit: "bottles" },
+          { id: "bbq", name: "BBQ", required: 6, unit: "bottles" },
+          { id: "garlic-oil", name: "Garlic Oil", required: 6, unit: "bottles" },
+          { id: "cinnamagic", name: "CinnaMagic", required: 4, unit: "bottles" },
+          { id: "buffalo", name: "Buffalo", required: 1, unit: "bottle" },
+          { id: "habanero", name: "Habanero", required: 1, unit: "bottle" }
+        ]
+      }
+    },
+    weekend: {
+      label: "Friday-Saturday",
+      categories: {
+        Cheeses: [
+          { id: "string-cheese", name: "String Cheese", required: 4, unit: "long tall tubs" },
+          { id: "mix-cheese", name: "Mix Cheese", required: 2, unit: "pizza tubs" }
+        ],
+        Desserts: [
+          { id: "lava-cakes", name: "Lava Cakes", required: 2, unit: "long tall tubs" },
+          { id: "brownies", name: "Brownies", required: 2, unit: "round tubs" }
+        ],
+        RTE: [
+          { id: "loaded-chicken", name: "Loaded Chicken", required: 1, unit: "long tall tub" },
+          { id: "boneless-wings", name: "Boneless Wings", required: 1, unit: "long tall tub" },
+          { id: "chicken-wings", name: "Chicken Wings", required: 2, unit: "long tall tubs" },
+          { id: "pasta", name: "Pasta", required: 1, unit: "long tall tub" },
+          { id: "grilled-chicken", name: "Grilled Chicken", required: 1, unit: "square tub" }
+        ],
+        Veggies: [
+          { id: "mushrooms", name: "Mushrooms", required: 4, unit: "metal tubs" },
+          { id: "pineapple", name: "Pineapple", required: 5, unit: "square tubs" },
+          { id: "olives", name: "Olives", required: 5, unit: "square tubs" },
+          { id: "tomatoes", name: "Tomatoes", required: 2, unit: "square tubs" },
+          { id: "jalapenos", name: "Jalapenos", required: 2, unit: "square tubs" },
+          { id: "banana-peppers", name: "Banana Peppers", required: 2, unit: "square tubs" }
+        ],
+        Sauces: [
+          { id: "pizza-tubs", name: "Pizza Tubs", required: 5, unit: "tubs" },
+          { id: "pizza-bottles", name: "Pizza Bottles", required: 8, unit: "bottles" },
+          { id: "ranch", name: "Ranch", required: 3, unit: "bottles" },
+          { id: "garlic-parm", name: "Garlic Parm", required: 8, unit: "bottles" },
+          { id: "alfredo", name: "Alfredo", required: 10, unit: "bottles" },
+          { id: "bbq", name: "BBQ", required: 8, unit: "bottles" },
+          { id: "garlic-oil", name: "Garlic Oil", required: 8, unit: "bottles" },
+          { id: "cinnamagic", name: "CinnaMagic", required: 6, unit: "bottles" },
+          { id: "buffalo", name: "Buffalo", required: 2, unit: "bottles" },
+          { id: "habanero", name: "Habanero", required: 2, unit: "bottles" }
+        ]
+      }
+    }
+  }
+};
+
+    </script>
+    <script>
+(function () {
+  const data = window.MORNING_PREP_DATA;
+  const storageKey = "morning-prep-state-v1";
+  const checklist = document.querySelector("#checklist");
+  const scheduleButtons = document.querySelectorAll("[data-schedule]");
+  const resetButton = document.querySelector("#resetButton");
+  const overallPercent = document.querySelector("#overallPercent");
+  const overallBar = document.querySelector("#overallBar");
+  const overallStatus = document.querySelector("#overallStatus");
+  const celebration = document.querySelector("#celebration");
+  const installButton = document.querySelector("#installButton");
+
+  let deferredInstallPrompt = null;
+  let state = loadState();
+
+  function loadState() {
+    const fallback = { schedule: "weekday", counts: {}, celebrated: false };
+
+    try {
+      return { ...fallback, ...JSON.parse(localStorage.getItem(storageKey)) };
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function saveState() {
+    localStorage.setItem(storageKey, JSON.stringify(state));
+  }
+
+  function getSchedule() {
+    return data.schedules[state.schedule];
+  }
+
+  function storageId(item) {
+    return `${state.schedule}:${item.id}`;
+  }
+
+  function getCount(item) {
+    return Number(state.counts[storageId(item)] || 0);
+  }
+
+  function setCount(item, nextCount) {
+    state.counts[storageId(item)] = Math.max(0, nextCount);
+    saveState();
+    updateItem(item);
+    updateProgress();
+  }
+
+  function allItems() {
+    const schedule = getSchedule();
+    return data.categories.flatMap((category) => schedule.categories[category] || []);
+  }
+
+  function itemProgress(item) {
+    return Math.min(getCount(item), item.required) / item.required;
+  }
+
+  function calculateProgress(items) {
+    if (!items.length) return 0;
+    const completeUnits = items.reduce((sum, item) => sum + itemProgress(item), 0);
+    return Math.round((completeUnits / items.length) * 100);
+  }
+
+  function itemTemplate(item) {
+    const count = getCount(item);
+    const complete = count >= item.required;
+    const article = document.createElement("article");
+    article.className = `item${complete ? " is-complete" : ""}`;
+    article.dataset.itemId = item.id;
+    article.innerHTML = `
+      <div class="item-info">
+        <div>
+          <span class="item-name">${item.name}</span>
+          <span class="required">Required: ${item.required} ${item.unit}</span>
+        </div>
+        <span class="checkmark" aria-label="${complete ? "Complete" : "Incomplete"}">&#10003;</span>
+      </div>
+      <div class="counter" aria-label="${item.name} count">
+        <button class="count-button" type="button" data-action="minus" aria-label="Subtract ${item.name}">-</button>
+        <span class="count-display" aria-live="polite">${count}</span>
+        <button class="count-button" type="button" data-action="plus" aria-label="Add ${item.name}">+</button>
+      </div>
+    `;
+
+    article.querySelector('[data-action="minus"]').addEventListener("click", () => setCount(item, getCount(item) - 1));
+    article.querySelector('[data-action="plus"]').addEventListener("click", () => setCount(item, getCount(item) + 1));
+    return article;
+  }
+
+  function categoryTemplate(categoryName, items) {
+    const category = document.createElement("section");
+    const percent = calculateProgress(items);
+    category.className = "category";
+    category.dataset.category = categoryName;
+    category.innerHTML = `
+      <div class="category-head">
+        <h2>${categoryName}</h2>
+        <strong data-category-percent>${percent}%</strong>
+      </div>
+      <div class="category-progress">
+        <div class="progress-track" aria-hidden="true"><span data-category-bar style="width: ${percent}%"></span></div>
+      </div>
+    `;
+
+    items.forEach((item) => category.appendChild(itemTemplate(item)));
+    return category;
+  }
+
+  function render() {
+    const schedule = getSchedule();
+    checklist.replaceChildren();
+
+    scheduleButtons.forEach((button) => {
+      const active = button.dataset.schedule === state.schedule;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+
+    data.categories.forEach((categoryName) => {
+      checklist.appendChild(categoryTemplate(categoryName, schedule.categories[categoryName] || []));
+    });
+
+    updateProgress();
+  }
+
+  function updateItem(item) {
+    const row = checklist.querySelector(`[data-item-id="${item.id}"]`);
+    if (!row) return;
+
+    const count = getCount(item);
+    const complete = count >= item.required;
+    row.classList.toggle("is-complete", complete);
+    row.querySelector(".count-display").textContent = count;
+    row.querySelector(".checkmark").setAttribute("aria-label", complete ? "Complete" : "Incomplete");
+  }
+
+  function updateProgress() {
+    const schedule = getSchedule();
+
+    data.categories.forEach((categoryName) => {
+      const items = schedule.categories[categoryName] || [];
+      const percent = calculateProgress(items);
+      const category = checklist.querySelector(`[data-category="${categoryName}"]`);
+      if (!category) return;
+
+      category.querySelector("[data-category-percent]").textContent = `${percent}%`;
+      category.querySelector("[data-category-bar]").style.width = `${percent}%`;
+    });
+
+    const items = allItems();
+    const percent = calculateProgress(items);
+    overallPercent.textContent = `${percent}%`;
+    overallBar.style.width = `${percent}%`;
+    overallStatus.textContent = `${schedule.label}: ${completedCount(items)} of ${items.length} items complete.`;
+
+    if (percent === 100 && !state.celebrated) {
+      state.celebrated = true;
+      saveState();
+      showCelebration();
+    }
+
+    if (percent < 100 && state.celebrated) {
+      state.celebrated = false;
+      saveState();
+    }
+  }
+
+  function completedCount(items) {
+    return items.filter((item) => getCount(item) >= item.required).length;
+  }
+
+  function showCelebration() {
+    celebration.classList.add("is-visible");
+    window.setTimeout(() => celebration.classList.remove("is-visible"), 1500);
+  }
+
+  scheduleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.schedule = button.dataset.schedule;
+      state.celebrated = false;
+      saveState();
+      render();
+    });
+  });
+
+  resetButton.addEventListener("click", () => {
+    const prefix = `${state.schedule}:`;
+    Object.keys(state.counts).forEach((key) => {
+      if (key.startsWith(prefix)) delete state.counts[key];
+    });
+    state.celebrated = false;
+    saveState();
+    render();
+  });
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    installButton.hidden = false;
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installButton.hidden = true;
+  });
+
+  render();
+}());
+
+    </script>
+  </body>
+</html>
